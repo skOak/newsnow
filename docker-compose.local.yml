@@ -5,6 +5,7 @@ services:
       - '4444:4444'
     volumes:
       - newsnow_data:/usr/app/.data
+      - ./shared/sources.json:/usr/app/shared/sources.json
     environment:
       - G_CLIENT_ID=
       - G_CLIENT_SECRET=

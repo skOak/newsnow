@@ -5,14 +5,14 @@ import type { originSources } from "./pre-sources"
 export type Color = "primary" | Exclude<keyof typeof colors, "current" | "inherit" | "transparent" | "black" | "white">
 
 type ConstSources = typeof originSources
-type MainSourceID = keyof(ConstSources)
+type MainSourceID = keyof (ConstSources)
 
 export type SourceID = {
   [Key in MainSourceID]: ConstSources[Key] extends { disable?: true } ? never :
-    ConstSources[Key] extends { sub?: infer SubSource } ? {
+  ConstSources[Key] extends { sub?: infer SubSource } ? {
     // @ts-expect-error >_<
-      [SubKey in keyof SubSource]: SubSource[SubKey] extends { disable?: true } ? never : `${Key}-${SubKey}`
-    }[keyof SubSource] | Key : Key;
+    [SubKey in keyof SubSource]: SubSource[SubKey] extends { disable?: true } ? never : `${Key}-${SubKey}`
+  }[keyof SubSource] | Key : Key;
 }[MainSourceID]
 
 export type AllSourceID = {
@@ -50,6 +50,7 @@ export interface OriginSource extends Partial<Omit<Source, "name" | "redirect">>
     // home?: string
     // disable?: boolean
     // interval?: number
+    // rss?: string
   } & Partial<Omit<Source, "title" | "name" | "redirect">>>
 }
 
@@ -77,6 +78,7 @@ export interface Source {
    */
   disable?: boolean | "cf"
   redirect?: SourceID
+  rss?: string
 }
 
 export interface Column {

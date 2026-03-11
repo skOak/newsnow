@@ -82,6 +82,35 @@ docker compose up
 ```
 同样可以通过 `docker-compose.yaml` 配置环境变量。
 
+### 私有化 VPS 部署 (定制版)
+我们对本分支进行了纯净化的魔改，使其更加适合个人的轻量级云端服务器，包含以下内置改进：
+- **纯净版布局**：默认仅保留“国内”、“科技”、“财经”、“最热”、“实时”版块。
+- **防止 IP 封禁**：全局刷新缓存时间下界提升至 60 分钟，大大减轻抓取频次。
+- **安全与纯浏览**：默认关闭第三方登录入口与鉴权，仅作为您的专属信息看板。
+
+#### 1. 编译部署
+放弃原版的预构建镜像，直接在当前源码目录下利用 `docker-compose.local.yml` 现场打包启动：
+```bash
+docker compose -f docker-compose.local.yml up -d --build
+```
+
+#### 2. 无需重复编译（零代码）添加 RSS 源
+由于本分支已在底层织入了动态生成方案，只要使用 Docker `volumes` 挂载 `shared/sources.json`，即可在宿主机直接编辑源。比如我们想要增加一个新的源，只需在 JSON 结尾加入如下配置：
+```json
+  "custom_feed": {
+    "name": "某科技独立博客",
+    "column": "tech",
+    "color": "green",
+    "rss": "https://example.com/rss.xml"
+  }
+```
+
+修改保存 JSON 后，无需再走重新 Build 的全流程，在宿主机只需运行：
+```bash
+docker compose -f docker-compose.local.yml restart newsnow
+```
+系统将会自动侦测到该 `rss` 字段并为其绑定抓取和解析能力，瞬间同步到前端版块中。
+
 ## 开发
 > [!Note]
 > 需要 Node.js >= 20
@@ -92,7 +121,54 @@ pnpm i
 pnpm dev
 ```
 
-你可能想要添加数据源，请关注 `shared/sources` `server/sources`，项目类型完备，结构简单，请自行探索。
+### 如何添加数据源（以新增美团技术博客为例）
+
+在 Docker Compose 部署的情况下，如果您想要新增一个资讯源（例如美团技术团队：`https://tech.meituan.com/feed/`），目前系统支持两种添加方式：
+
+#### 方式一：免编译配置即插即用（推荐用于标准 RSS）
+如果您使用的是本仓库的定制魔改版，且目标网站提供标准的 RSS 订阅链接，您可以完全无代码、免编译添加！
+
+1. 找到您挂载在外部映射出来的 `shared/sources.json`。
+2. 在该 JSON 文件中添加该站点的专属字段块配置（其中需包含 `rss` 字段）：
+```json
+  "meituan_tech": {
+    "name": "美团技术团队",
+    "column": "tech",
+    "color": "yellow",
+    "rss": "https://tech.meituan.com/feed/"
+  }
+```
+3. 保存文件后，在宿主机执行 `docker compose restart newsnow` 重启容器，系统会自动检测并绑定抓取器，立马生效并展示到页面的科技栏目下。
+
+#### 方式二：代码级深度定制（用于非标准 API 或需网页抓取）
+如果目标站点不提供 RSS，您必须手写抓取和解析代码，流程如下：
+
+1. **注册基础信息**：修改 `shared/pre-sources.ts`，在 `originSources` 中加入基础配置（注意：此时不需要加 `rss` 字段）。
+```typescript
+  "meituan_tech": {
+    "name": "美团技术团队",
+    "column": "tech",
+    "color": "yellow",
+    "home": "https://tech.meituan.com/"
+  }
+```
+2. **编写抓取逻辑**：在 `server/sources/` 目录下新建一个命名为 `meituan_tech.ts` 的文件，利用项目内置的高级方法，编写具体的 Cheerio 解析或 API 拉取逻辑：
+```typescript
+import { defineSource } from "../utils/source"
+
+export default defineSource(async () => {
+  // 编写您的 fetch 请求和响应体解析代码
+  // ...
+  return [
+    { id: "1", title: "美团技术文章概览", url: "https://tech.meituan.com/xxx" }
+  ]
+})
+```
+3. **重新编译生成**：因为新增了 `.ts` 业务源码等编译期改动，您必须本地执行一遍 `npm run presource` 生成静态映射，并且在服务端强制销毁重建容器以编译最新的代码文件：
+```bash
+docker compose -f docker-compose.local.yml down
+docker compose -f docker-compose.local.yml up -d --build
+```
 
 ## 路线图
 - 添加 **多语言支持**（英语、中文，更多语言即将推出）

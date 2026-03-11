@@ -44,7 +44,7 @@ export const originSources = {
     name: "联合早报",
     interval: Time.Common,
     type: "realtime",
-    column: "world",
+    column: "china",
     color: "red",
     desc: "来自第三方网站: 早晨报",
     home: "https://www.zaobao.com",
@@ -162,7 +162,7 @@ export const originSources = {
   "cankaoxiaoxi": {
     name: "参考消息",
     color: "red",
-    column: "world",
+    column: "china",
     interval: Time.Common,
     home: "https://china.cankaoxiaoxi.com",
   },
@@ -313,7 +313,7 @@ export const originSources = {
   },
   "kaopu": {
     name: "靠谱新闻",
-    column: "world",
+    column: "china",
     color: "gray",
     interval: Time.Common,
     desc: "不一定靠谱，多看多思考",
@@ -425,7 +425,7 @@ export const originSources = {
   },
   "steam": {
     name: "Steam",
-    column: "world",
+    column: "tech",
     title: "在线人数",
     color: "blue",
     type: "hottest",
@@ -498,6 +498,7 @@ export function genSources() {
       home: source.home,
       color: source.color ?? "primary",
       interval: source.interval ?? Time.Default,
+      ...(source.rss ? { rss: source.rss } : {}),
     }
     if (source.sub && Object.keys(source.sub).length) {
       Object.entries(source.sub).forEach(([subId, subSource], i) => {
