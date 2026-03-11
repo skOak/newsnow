@@ -3,7 +3,7 @@ services:
     image: ghcr.io/ourongxing/newsnow:latest
     container_name: newsnow
     ports:
-      - '4444:4444'
+      - '8444:4444'
     volumes:
       - newsnow_data:/usr/app/.data
     environment:
