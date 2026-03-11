@@ -352,6 +352,14 @@ export const originSources = {
       },
     },
   },
+  "meituan_tech": {
+    name: "美团技术团队",
+    column: "tech",
+    color: "yellow", // 或者 blue、red 等 unocss 支持的基础颜色
+    type: "hottest",
+    rss: "https://tech.meituan.com/feed/",
+    home: "https://tech.meituan.com/",
+  },
   "ghxi": {
     name: "果核剥壳",
     column: "china",
