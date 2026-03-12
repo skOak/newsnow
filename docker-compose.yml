@@ -1,6 +1,6 @@
 services:
   newsnow:
-    image: ghcr.io/ourongxing/newsnow:latest
+    image: docker.io/skoak/newsnow:latest
     container_name: newsnow
     ports:
       - '8444:4444'
