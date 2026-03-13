@@ -69,6 +69,8 @@ export function Header() {
         </span>
       </span>
       <span className="justify-self-end flex gap-2 items-center text-xl text-primary-600 dark:text-primary">
+        <button type="button" title="照片水印" className="i-ph:drop-duotone btn" onClick={() => window.location.href = "/watermark/"} />
+        <button type="button" title="照片排版" className="i-ph:layout-duotone btn" onClick={() => window.location.href = "/sandphoto/"} />
         <GoTop />
         <Refresh />
         <Github />

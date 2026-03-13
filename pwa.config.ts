@@ -36,7 +36,7 @@ const pwaOption: Partial<VitePWAOptions> = {
     ],
   },
   workbox: {
-    navigateFallbackDenylist: [/^\/api/],
+    navigateFallbackDenylist: [/^\/api/, /^\/watermark/, /^\/sandphoto/],
   },
   devOptions: {
     enabled: process.env.SW_DEV === "true",

@@ -82,6 +82,29 @@ docker compose up
 ```
 同样可以通过 `docker-compose.yaml` 配置环境变量。
 
+#### 多架构镜像构建与推送
+
+```sh
+docker buildx build --platform linux/amd64,linux/arm64 -t docker.io/your-user/newsnow:latest --push .
+```
+
+#### 内置子项目
+
+Docker 镜像内置了两个独立工具页面：
+
+- **照片水印** (`/watermark`) — [skOak/sfz](https://github.com/skOak/sfz)
+- **照片排版** (`/sandphoto`) — [skOak/sandphoto-react](https://github.com/skOak/sandphoto-react)
+
+它们会在 Docker 构建时自动拉取。如果子项目有新版本发布，需要传入 `CACHEBUST` 参数来跳过 Docker 缓存，强制重新拉取：
+
+```sh
+# docker compose
+docker compose build --build-arg CACHEBUST=$(date +%s)
+
+# docker buildx
+docker buildx build --build-arg CACHEBUST=$(date +%s) --platform linux/amd64,linux/arm64 -t docker.io/your-user/newsnow:latest --push .
+```
+
 ### 私有化 VPS 部署 (定制版)
 我们对本分支进行了纯净化的魔改，使其更加适合个人的轻量级云端服务器，包含以下内置改进：
 - **纯净版布局**：默认仅保留“国内”、“科技”、“财经”、“最热”、“实时”版块。

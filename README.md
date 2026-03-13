@@ -92,6 +92,29 @@ docker compose up
 
 You can also set Environment Variables in `docker-compose.yml`.
 
+#### Multi-architecture Build & Push
+
+```sh
+docker buildx build --platform linux/amd64,linux/arm64 -t docker.io/your-user/newsnow:latest --push .
+```
+
+#### Bundled Sub-projects
+
+The Docker image bundles two standalone tools as static pages:
+
+- **照片水印** (`/watermark`) — [skOak/sfz](https://github.com/skOak/sfz)
+- **照片排版** (`/sandphoto`) — [skOak/sandphoto-react](https://github.com/skOak/sandphoto-react)
+
+They are pulled automatically during the Docker build. To force re-downloading the latest release (bypassing Docker cache), pass the `CACHEBUST` build arg:
+
+```sh
+# docker compose
+docker compose build --build-arg CACHEBUST=$(date +%s)
+
+# docker buildx
+docker buildx build --build-arg CACHEBUST=$(date +%s) --platform linux/amd64,linux/arm64 -t docker.io/your-user/newsnow:latest --push .
+```
+
 ## Development
 
 > [!Note]

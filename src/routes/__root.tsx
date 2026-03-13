@@ -19,6 +19,12 @@ export const Route = createRootRouteWithContext<{
 })
 
 function NotFoundComponent() {
+  // 外部静态子项目路径白名单，不做 SPA 内重定向
+  const externalPaths = ["/watermark", "/sandphoto"]
+  const currentPath = window.location.pathname
+  if (externalPaths.some(p => currentPath.startsWith(p))) {
+    return null
+  }
   const nav = Route.useNavigate()
   nav({
     to: "/",
