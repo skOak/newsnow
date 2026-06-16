@@ -460,6 +460,8 @@ export const originSources = {
     color: "green",
     type: "hottest",
     home: "https://www.freebuf.com/",
+    // 服务器云 IP 被 FreeBuf 阿里云 WAF 封锁，暂时禁用
+    disable: true,
   },
 
   "qqvideo": {
